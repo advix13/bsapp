@@ -76,18 +76,18 @@ jobs:
           # Copy root index.html to the gh-pages root
           cp root-index.html dashboard/out/index-redirect.html
           
-          # Create a root index.html that redirects to /bsapp/
+          # Create an index.html in the root of the output folder
           echo '<!DOCTYPE html>
           <html>
             <head>
               <meta charset="utf-8">
-              <meta http-equiv="refresh" content="0;url=/bsapp/">
+              <meta http-equiv="refresh" content="0;url=./bsapp/">
               <title>Redirecting to BlueSpring Dashboard</title>
             </head>
             <body>
-              <p>Redirecting to <a href="/bsapp/">BlueSpring Dashboard</a>...</p>
+              <p>Redirecting to <a href="./bsapp/">BlueSpring Dashboard</a>...</p>
             </body>
-          </html>' > dashboard/out/redirect.html
+          </html>' > dashboard/out/index.html
           
           # List the output directory contents
           echo "Contents of the build directory:"
@@ -100,29 +100,4 @@ jobs:
           folder: dashboard/out
           clean: true
           clean-exclude: |
-            .nojekyll
-          
-      - name: Create index.html in gh-pages root
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const fs = require('fs');
-            const content = `<!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta http-equiv="refresh" content="0;url=/bsapp/">
-                <title>Redirecting to BlueSpring Dashboard</title>
-              </head>
-              <body>
-                <p>Redirecting to <a href="/bsapp/">BlueSpring Dashboard</a>...</p>
-              </body>
-            </html>`;
-            await github.rest.repos.createOrUpdateFileContents({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              path: 'index.html',
-              message: 'Add root redirect index.html',
-              content: Buffer.from(content).toString('base64'),
-              branch: 'gh-pages'
-            }); 
+            .nojekyll 

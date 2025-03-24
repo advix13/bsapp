@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+const fs = require('fs');
+
 const nextConfig = {
   // Skip type checking and eslint during build
   typescript: {
@@ -18,8 +21,8 @@ const nextConfig = {
     unoptimized: true,
     domains: ['*'],
   },
-  // Output standalone build
-  output: "standalone",
+  // Output standalone build - disable for now to avoid the client-reference-manifest issue
+  output: process.env.NODE_ENV === 'development' ? undefined : 'export',
   // Disable React strict mode
   reactStrictMode: false,
   // Disable source maps in production
@@ -34,7 +37,26 @@ const nextConfig = {
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // This helps with route group handling
     config.optimization.moduleIds = 'deterministic';
+    
+    // Add a plugin to handle the client-reference-manifest issue
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'process.env.__NEXT_ROUTER_BASEPATH': JSON.stringify(''),
+      })
+    );
+    
     return config;
+  },
+  // Custom distDir to avoid issues with nested directories in route groups
+  distDir: '.next',
+  // Ensure routes with parentheses are handled correctly
+  async rewrites() {
+    return [
+      {
+        source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        destination: '/$1',
+      },
+    ];
   },
 };
 

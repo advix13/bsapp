@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd dashboard && npm install && npm run build",
+  "buildCommand": "cd dashboard && npm run vercel-build",
   "outputDirectory": "dashboard/.next",
   "devCommand": "cd dashboard && npm run dev",
   "installCommand": "cd dashboard && npm install",
@@ -10,7 +10,14 @@
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1",
     "NEXT_EXPERIMENTAL_ROUTING": "1",
-    "NEXT_SKIP_CLIENT_MANIFEST": "1"
+    "NEXT_SKIP_CLIENT_MANIFEST": "1",
+    "VERCEL": "1"
   },
-  "ignoreCommand": "node -e \"if(process.env.VERCEL_GIT_COMMIT_REF !== 'main') process.exit(1)\""
+  "ignoreCommand": "node -e \"if(process.env.VERCEL_GIT_COMMIT_REF !== 'main') process.exit(1)\"",
+  "builds": [
+    {
+      "src": "dashboard",
+      "use": "@vercel/next"
+    }
+  ]
 } 

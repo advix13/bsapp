@@ -7,8 +7,10 @@
   },
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "next build && node build-fix.js",
-    "vercel-build": "next build && node build-fix.js",
+    "prebuild": "node build-fix.js",
+    "build": "next build",
+    "postbuild": "node build-fix.js",
+    "vercel-build": "node build-fix.js && next build && node build-fix.js",
     "start": "next start",
     "lint": "next lint"
   },

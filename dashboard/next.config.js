@@ -21,8 +21,8 @@ const nextConfig = {
     unoptimized: true,
     domains: ['*'],
   },
-  // Output standalone build - disable for now to avoid the client-reference-manifest issue
-  output: process.env.NODE_ENV === 'development' ? undefined : 'export',
+  // Use standalone for Vercel compatibility
+  output: "standalone",
   // Disable React strict mode
   reactStrictMode: false,
   // Disable source maps in production

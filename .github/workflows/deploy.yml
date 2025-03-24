@@ -65,42 +65,49 @@ jobs:
           GITHUB_ACTIONS: true
           NODE_ENV: production
 
-      - name: Prepare files for GitHub Pages
+      - name: Setup Website Root Files
         run: |
-          # Create temporary directory for organizing files
-          mkdir -p gh-pages-structure
-          
-          # Move the main index.html to the root
-          cp index.html gh-pages-structure/index.html
+          # Create index.html at the site root
+          cat << EOF > index.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <meta http-equiv="refresh" content="0;url=./dashboard/out/">
+              <title>BlueSpring Dashboard</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                      line-height: 1.6;
+                      text-align: center;
+                      padding: 50px;
+                  }
+                  .loading {
+                      margin-top: 20px;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>BlueSpring Dashboard</h1>
+              <p>Redirecting to dashboard...</p>
+              <p>If you are not redirected automatically, <a href="./dashboard/out/">click here</a>.</p>
+              <div class="loading">Loading...</div>
+          </body>
+          </html>
+          EOF
           
           # Create .nojekyll file to bypass Jekyll processing
-          touch gh-pages-structure/.nojekyll
+          touch .nojekyll
           
-          # Set up the bsapp directory structure
-          mkdir -p gh-pages-structure/bsapp
-          cp -r dashboard/out/* gh-pages-structure/bsapp/
-          
-          # Create a special dashboard redirect path in case it's needed
-          mkdir -p gh-pages-structure/bsapp/dashboard
-          echo '<!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta http-equiv="refresh" content="0;url=../index.html">
-              <title>Redirecting to BlueSpring Dashboard</title>
-            </head>
-            <body>
-              <p>Redirecting to <a href="../index.html">BlueSpring Dashboard</a>...</p>
-            </body>
-          </html>' > gh-pages-structure/bsapp/dashboard/index.html
-          
-          # List the final directory structure for debugging
-          echo "Final GitHub Pages directory structure:"
-          find gh-pages-structure -type f | sort
+          # Create 404.html for better GitHub Pages navigation
+          cp index.html 404.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: gh-pages-structure
-          clean: true 
+          folder: .
+          clean-exclude: |
+            .nojekyll
+          force: true 

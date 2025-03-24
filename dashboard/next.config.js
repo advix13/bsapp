@@ -10,6 +10,8 @@ const nextConfig = {
   // Experimental features
   experimental: {
     forceSwcTransforms: true,
+    // Add serverActions to ensure proper build
+    serverActions: true,
   },
   // Disable image optimization
   images: {
@@ -28,6 +30,12 @@ const nextConfig = {
   compress: true,
   // Increase the build timeout
   staticPageGenerationTimeout: 1000,
+  // Add a workaround for handling route groups properly
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // This helps with route group handling
+    config.optimization.moduleIds = 'deterministic';
+    return config;
+  },
 };
 
 module.exports = nextConfig; 

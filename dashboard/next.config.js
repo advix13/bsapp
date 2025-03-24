@@ -2,10 +2,8 @@
 const path = require('path');
 const fs = require('fs');
 
-// For GitHub Pages deployment
+// For GitHub Pages deployment - using no base path for direct deployment
 const isProd = process.env.NODE_ENV === 'production';
-const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
-const basePath = isGitHubActions ? '/bsapp' : '';
 
 const nextConfig = {
   // Skip type checking and eslint during build
@@ -25,10 +23,6 @@ const nextConfig = {
   },
   // Static HTML export for GitHub Pages
   output: 'export',
-  // Set basePath for GitHub Pages - THIS IS CRITICAL
-  basePath: basePath,
-  // Set assetPrefix for GitHub Pages assets
-  assetPrefix: basePath,
   // Disable React strict mode
   reactStrictMode: false,
   // Disable source maps in production
@@ -43,15 +37,6 @@ const nextConfig = {
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // This helps with route group handling
     config.optimization.moduleIds = 'deterministic';
-    
-    // Add a plugin to handle the client-reference-manifest issue
-    if (webpack.DefinePlugin) {
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          'process.env.__NEXT_ROUTER_BASEPATH': JSON.stringify(basePath),
-        })
-      );
-    }
     
     return config;
   },

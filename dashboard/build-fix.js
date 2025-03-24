@@ -7,17 +7,18 @@ const path = require('path');
 // Define base paths - handle both local and Vercel environments
 const isVercel = process.env.VERCEL === '1';
 const basePath = isVercel ? '/vercel/path0' : __dirname;
-const baseNextDir = path.join(basePath, isVercel ? 'dashboard/.next' : '.next');
+const baseNextDir = path.join(basePath, '.next');
 
 // Paths to check and fix
 const pathsToFix = [
   path.join(baseNextDir, 'server/app/(dashboard)'),
   // Add backup path for Vercel environment
   path.join(basePath, '.next/server/app/(dashboard)'),
-  // Add another possible path structure
-  path.join(basePath, 'dashboard/.next/server/app/(dashboard)'),
   // For standalone output
-  path.join(baseNextDir, 'standalone/dashboard/.next/server/app/(dashboard)')
+  path.join(baseNextDir, 'standalone/.next/server/app/(dashboard)'),
+  // Additional paths for absolute reference
+  path.join('/vercel/path0/.next/server/app/(dashboard)'),
+  path.join('/vercel/path0/.next/standalone/.next/server/app/(dashboard)')
 ];
 
 // Ensure directories exist
@@ -66,14 +67,28 @@ pathsToFix.forEach(dirPath => {
 
 // Handle additional Vercel-specific case by creating a symlink if needed
 if (isVercel) {
-  const source = path.join(basePath, 'dashboard/.next/server/app/(dashboard)/page_client-reference-manifest.js');
-  const target = path.join(basePath, '.next/server/app/(dashboard)/page_client-reference-manifest.js');
-  
   try {
-    if (fs.existsSync(source) && !fs.existsSync(target)) {
-      ensureDir(path.dirname(target));
-      fs.symlinkSync(source, target);
-      console.log(`Created symlink from ${source} to ${target}`);
+    const possibleSourcePaths = [
+      path.join(basePath, '.next/server/app/(dashboard)/page_client-reference-manifest.js'),
+      path.join('/vercel/path0/.next/server/app/(dashboard)/page_client-reference-manifest.js')
+    ];
+
+    const possibleTargetPaths = [
+      path.join(basePath, '.next/standalone/.next/server/app/(dashboard)/page_client-reference-manifest.js'),
+      path.join('/vercel/path0/.next/standalone/.next/server/app/(dashboard)/page_client-reference-manifest.js')
+    ];
+
+    // Try to create symlinks between any existing source and missing target
+    for (const source of possibleSourcePaths) {
+      if (fs.existsSync(source)) {
+        for (const target of possibleTargetPaths) {
+          if (!fs.existsSync(target)) {
+            ensureDir(path.dirname(target));
+            fs.symlinkSync(source, target);
+            console.log(`Created symlink from ${source} to ${target}`);
+          }
+        }
+      }
     }
   } catch (err) {
     console.error('Error creating symlink:', err.message);

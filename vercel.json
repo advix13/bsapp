@@ -9,6 +9,5 @@
   ],
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1"
-  },
-  "ignoreCommand": "echo 'Skipping checks, continuing with deployment'"
+  }
 } 

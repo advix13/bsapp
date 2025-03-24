@@ -1,0 +1,22 @@
+{
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/$1" }
+  ],
+  "env": {
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NEXT_EXPERIMENTAL_ROUTING": "1",
+    "NEXT_SKIP_CLIENT_MANIFEST": "1",
+    "VERCEL": "1"
+  },
+  "builds": [
+    {
+      "src": ".",
+      "use": "@vercel/next"
+    }
+  ]
+} 

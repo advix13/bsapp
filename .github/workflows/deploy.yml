@@ -63,6 +63,7 @@ jobs:
           npm run build
         env:
           GITHUB_ACTIONS: true
+          NODE_ENV: production
 
       - name: Prepare files for GitHub Pages
         run: |
@@ -72,11 +73,25 @@ jobs:
           # Create 404.html for better GitHub Pages navigation
           cp dashboard/out/index.html dashboard/out/404.html
           
-          # Copy root index.html to the build directory
+          # Copy root index.html to the gh-pages root
           cp root-index.html dashboard/out/index-redirect.html
           
-          # Ensure all paths are correct
-          echo "Preparing files for GitHub Pages deployment..."
+          # Create a root index.html that redirects to /bsapp/
+          echo '<!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="refresh" content="0;url=/bsapp/">
+              <title>Redirecting to BlueSpring Dashboard</title>
+            </head>
+            <body>
+              <p>Redirecting to <a href="/bsapp/">BlueSpring Dashboard</a>...</p>
+            </body>
+          </html>' > dashboard/out/redirect.html
+          
+          # List the output directory contents
+          echo "Contents of the build directory:"
+          ls -la dashboard/out
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -85,4 +100,29 @@ jobs:
           folder: dashboard/out
           clean: true
           clean-exclude: |
-            .nojekyll 
+            .nojekyll
+          
+      - name: Create index.html in gh-pages root
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const content = `<!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta http-equiv="refresh" content="0;url=/bsapp/">
+                <title>Redirecting to BlueSpring Dashboard</title>
+              </head>
+              <body>
+                <p>Redirecting to <a href="/bsapp/">BlueSpring Dashboard</a>...</p>
+              </body>
+            </html>`;
+            await github.rest.repos.createOrUpdateFileContents({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: 'index.html',
+              message: 'Add root redirect index.html',
+              content: Buffer.from(content).toString('base64'),
+              branch: 'gh-pages'
+            }); 

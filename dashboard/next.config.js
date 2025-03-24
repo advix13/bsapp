@@ -7,39 +7,27 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Disable static optimization to avoid client manifest issues
+  // Experimental features
   experimental: {
-    serverActions: true,
     forceSwcTransforms: true,
-    optimizePackageImports: false,
   },
-  // Disable image optimization to reduce build complexity
+  // Disable image optimization
   images: {
     unoptimized: true,
+    domains: ['*'],
   },
-  // Disable static page generation
-  staticPageGenerationTimeout: 1000,
-  // Add output standalone for better Vercel compatibility
+  // Output standalone build
   output: "standalone",
-  // Disable React strict mode for more permissive builds
+  // Disable React strict mode
   reactStrictMode: false,
-  // Increase build memory limit
-  env: {
-    NODE_OPTIONS: '--max-old-space-size=4096'
-  },
   // Disable source maps in production
   productionBrowserSourceMaps: false,
   // Disable powered by header
   poweredByHeader: false,
-  // Generate ETags for better caching
-  generateEtags: true,
-  // Disable x-powered-by header
+  // Enable compression
   compress: true,
-  // Allow all domains for images
-  images: {
-    domains: ['*'],
-    unoptimized: true,
-  },
+  // Increase the build timeout
+  staticPageGenerationTimeout: 1000,
 };
 
 module.exports = nextConfig; 

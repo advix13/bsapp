@@ -19,6 +19,20 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// Generate static params for the dynamic route
+export function generateStaticParams() {
+  // Generate static paths for customer IDs 1-7
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+    { id: '4' },
+    { id: '5' },
+    { id: '6' },
+    { id: '7' }
+  ];
+}
+
 // This is a placeholder for demonstration purposes
 // In a real app, you would fetch the customer data based on the ID parameter
 export default function CustomerDetail({ params }: { params: { id: string } }) {

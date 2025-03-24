@@ -67,37 +67,40 @@ jobs:
 
       - name: Prepare files for GitHub Pages
         run: |
+          # Create temporary directory for organizing files
+          mkdir -p gh-pages-structure
+          
+          # Move the main index.html to the root
+          cp index.html gh-pages-structure/index.html
+          
           # Create .nojekyll file to bypass Jekyll processing
-          touch dashboard/out/.nojekyll
+          touch gh-pages-structure/.nojekyll
           
-          # Create 404.html for better GitHub Pages navigation
-          cp dashboard/out/index.html dashboard/out/404.html
+          # Set up the bsapp directory structure
+          mkdir -p gh-pages-structure/bsapp
+          cp -r dashboard/out/* gh-pages-structure/bsapp/
           
-          # Copy root index.html to the gh-pages root
-          cp root-index.html dashboard/out/index-redirect.html
-          
-          # Create an index.html in the root of the output folder
+          # Create a special dashboard redirect path in case it's needed
+          mkdir -p gh-pages-structure/bsapp/dashboard
           echo '<!DOCTYPE html>
           <html>
             <head>
               <meta charset="utf-8">
-              <meta http-equiv="refresh" content="0;url=./bsapp/">
+              <meta http-equiv="refresh" content="0;url=../index.html">
               <title>Redirecting to BlueSpring Dashboard</title>
             </head>
             <body>
-              <p>Redirecting to <a href="./bsapp/">BlueSpring Dashboard</a>...</p>
+              <p>Redirecting to <a href="../index.html">BlueSpring Dashboard</a>...</p>
             </body>
-          </html>' > dashboard/out/index.html
+          </html>' > gh-pages-structure/bsapp/dashboard/index.html
           
-          # List the output directory contents
-          echo "Contents of the build directory:"
-          ls -la dashboard/out
+          # List the final directory structure for debugging
+          echo "Final GitHub Pages directory structure:"
+          find gh-pages-structure -type f | sort
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: dashboard/out
-          clean: true
-          clean-exclude: |
-            .nojekyll 
+          folder: gh-pages-structure
+          clean: true 

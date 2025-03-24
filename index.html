@@ -1,45 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0;url=./bsapp/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlueSpring Dashboard</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f8ff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f5f9ff;
         }
-        .container {
-            text-align: center;
-            padding: 20px;
-        }
+        
         h1 {
             color: #0070f3;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
         }
+        
+        h2 {
+            color: #0070f3;
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 0.5rem;
+        }
+        
         p {
-            margin-top: 20px;
-            color: #333;
+            font-size: 1.1rem;
+            margin: 1rem 0;
         }
+        
         a {
             color: #0070f3;
             text-decoration: none;
-            font-weight: bold;
+            transition: color 0.2s ease;
         }
+        
         a:hover {
             text-decoration: underline;
+        }
+        
+        .button {
+            display: inline-block;
+            background-color: #0070f3;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .button:hover {
+            background-color: #005ad1;
+            text-decoration: none;
+        }
+        
+        .features {
+            margin: 2rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature h3 {
+            margin-top: 0;
+            color: #0070f3;
+        }
+        
+        .note {
+            background-color: #f0f7ff;
+            padding: 1rem;
+            border-left: 4px solid #0070f3;
+            margin: 1.5rem 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>BlueSpring Dashboard</h1>
-        <p>Redirecting to the dashboard...</p>
-        <p>If you are not redirected automatically, <a href="./bsapp/">click here</a>.</p>
+    <h1>BlueSpring Dashboard</h1>
+    <p>A modern, responsive dashboard for BlueSpring water and ice distribution company built with Next.js and Tailwind CSS.</p>
+    
+    <a href="https://advix13.github.io/bsapp/dashboard/" class="button">Launch Dashboard</a>
+    <a href="https://github.com/advix13/bsapp" class="button" style="background-color: #333;">View on GitHub</a>
+    
+    <h2>Features</h2>
+    <div class="features">
+        <div class="feature">
+            <h3>Dashboard Overview</h3>
+            <p>Key metrics and visualizations</p>
+        </div>
+        <div class="feature">
+            <h3>Products Management</h3>
+            <p>Inventory and product catalog</p>
+        </div>
+        <div class="feature">
+            <h3>Orders Management</h3>
+            <p>Order processing and tracking</p>
+        </div>
+        <div class="feature">
+            <h3>Inventory Management</h3>
+            <p>Stock levels and adjustments</p>
+        </div>
+        <div class="feature">
+            <h3>Customer Management</h3>
+            <p>Customer information and sales history</p>
+        </div>
+        <div class="feature">
+            <h3>Reports & Analytics</h3>
+            <p>Sales, inventory, and customer insights</p>
+        </div>
+    </div>
+    
+    <h2>Technology Stack</h2>
+    <ul>
+        <li><strong>Frontend:</strong> Next.js, React, TypeScript</li>
+        <li><strong>Styling:</strong> Tailwind CSS</li>
+        <li><strong>Icons:</strong> Lucide React</li>
+    </ul>
+    
+    <div class="note">
+        <p><strong>Notice:</strong> If clicking the Launch Dashboard button doesn't work, try these direct links:</p>
+        <ul>
+            <li><a href="https://advix13.github.io/bsapp/">Main path (/bsapp/)</a></li>
+            <li><a href="https://advix13.github.io/bsapp/index.html">Explicit index.html</a></li>
+            <li><a href="https://advix13.github.io/bsapp/dashboard/">Dashboard path</a></li>
+        </ul>
     </div>
 </body>
 </html> 

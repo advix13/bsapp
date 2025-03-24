@@ -2,6 +2,15 @@
 const path = require('path');
 const fs = require('fs');
 
+// Get repository name from package.json or default to empty string
+const getBasePath = () => {
+  const isGHPages = process.env.GITHUB_ACTIONS === 'true';
+  if (isGHPages) {
+    return '/bsapp';
+  }
+  return '';
+};
+
 const nextConfig = {
   // Skip type checking and eslint during build
   typescript: {
@@ -21,8 +30,10 @@ const nextConfig = {
     unoptimized: true,
     domains: ['*'],
   },
-  // Use standalone for Vercel compatibility
-  output: "standalone",
+  // Use 'export' for GitHub Pages
+  output: 'export',
+  // Set basePath for GitHub Pages
+  basePath: getBasePath(),
   // Disable React strict mode
   reactStrictMode: false,
   // Disable source maps in production
@@ -41,7 +52,7 @@ const nextConfig = {
     // Add a plugin to handle the client-reference-manifest issue
     config.plugins.push(
       new webpack.DefinePlugin({
-        'process.env.__NEXT_ROUTER_BASEPATH': JSON.stringify(''),
+        'process.env.__NEXT_ROUTER_BASEPATH': JSON.stringify(getBasePath()),
       })
     );
     
@@ -58,6 +69,8 @@ const nextConfig = {
       },
     ];
   },
+  // Needed for static export with route groups
+  trailingSlash: true,
 };
 
 module.exports = nextConfig; 

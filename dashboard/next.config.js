@@ -3,26 +3,35 @@ const path = require('path');
 const fs = require('fs');
 
 const nextConfig = {
-  // Skip type checking and eslint during build
+  // Skip type checking and eslint during build - with enhanced ignoring
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Experimental features
+  // Experimental features with improved error handling
   experimental: {
     forceSwcTransforms: true,
+    esmExternals: 'loose', // More lenient ESM handling
+    serverComponentsExternalPackages: [], // Prevents issues with external packages
+    optimizePackageImports: false, // Disable optimizations that might cause issues
   },
   // Enable image optimization for Vercel
   images: {
     domains: [],
-    // Only needed for static export, remove for Vercel
-    // unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    // Disable image size validation
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Remove static export for Vercel
-  // output: 'export',
-  // Disable React strict mode
+  // Disable React strict mode to avoid double renders
   reactStrictMode: false,
   // Disable source maps in production
   productionBrowserSourceMaps: false,
@@ -32,8 +41,17 @@ const nextConfig = {
   compress: true,
   // Custom distDir to avoid issues with nested directories in route groups
   distDir: '.next',
-  // Only needed for static export, not for Vercel
-  // trailingSlash: true,
+  // Ensure we can recover from build errors
+  onDemandEntries: {
+    // Keep pages in memory for longer
+    maxInactiveAge: 60 * 60 * 1000, // 1 hour in milliseconds
+    // Maximum number of pages to keep in memory
+    pagesBufferLength: 5,
+  },
+  // Increase timeouts
+  staticPageGenerationTimeout: 120,
+  // Disable SWC minify as it can sometimes cause issues
+  swcMinify: false,
 };
 
 module.exports = nextConfig; 

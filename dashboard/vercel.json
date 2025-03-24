@@ -5,7 +5,6 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "ignoreCommand": "echo 'Skipping checks to ensure build completes'",
   "git": {
     "deploymentEnabled": {
       "main": true

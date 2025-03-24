@@ -13,7 +13,6 @@
     "NEXT_SKIP_CLIENT_MANIFEST": "1",
     "VERCEL": "1"
   },
-  "ignoreCommand": "node -e \"if(process.env.VERCEL_GIT_COMMIT_REF !== 'main') process.exit(1)\"",
   "builds": [
     {
       "src": ".",

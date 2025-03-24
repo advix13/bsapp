@@ -4,11 +4,7 @@ const fs = require('fs');
 
 // Get repository name from package.json or default to empty string
 const getBasePath = () => {
-  const isGHPages = process.env.GITHUB_ACTIONS === 'true';
-  if (isGHPages) {
-    return '/bsapp';
-  }
-  return '';
+  return process.env.GITHUB_ACTIONS === 'true' ? '/bsapp' : '';
 };
 
 const nextConfig = {
@@ -34,6 +30,8 @@ const nextConfig = {
   output: 'export',
   // Set basePath for GitHub Pages
   basePath: getBasePath(),
+  // Set assetPrefix for GitHub Pages
+  assetPrefix: getBasePath(),
   // Disable React strict mode
   reactStrictMode: false,
   // Disable source maps in production

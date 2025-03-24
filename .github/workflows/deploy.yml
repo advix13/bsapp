@@ -65,16 +65,26 @@ jobs:
         env:
           GITHUB_ACTIONS: true
 
-      - name: Fix 404.html for GitHub Pages
+      - name: Fix paths and create nojekyll file
         run: |
           cd dashboard/out
-          cp index.html 404.html
           # Create a .nojekyll file to bypass Jekyll processing
           touch .nojekyll
+          
+          # Create 404.html for better GitHub Pages navigation
+          cp index.html 404.html
+          
+          # Ensure there's an index.html in the root
+          if [ ! -f "index.html" ]; then
+            echo "Creating index.html redirection"
+            echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=./bsapp/"></head><body>Redirecting...</body></html>' > index.html
+          fi
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: dashboard/out
-          clean: true 
+          clean: true
+          clean-exclude: |
+            .nojekyll 

@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd dashboard
-          npm ci
+          npm install --legacy-peer-deps
 
       - name: Run pre-build fixes
         run: |

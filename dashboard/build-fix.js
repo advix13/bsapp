@@ -1,96 +1,77 @@
+// This is a pre/post-build step to create empty files for route group compatibility
+// And handle other build/deployment compatibility issues
+
 const fs = require('fs');
 const path = require('path');
 
-// This script creates empty client-reference-manifest files for route groups
-// to prevent the ENOENT error during build
+// Detect if we're on Vercel or local
+const env = process.env.VERCEL ? 'Vercel' : 'Local';
+console.log(`Environment: ${env}`);
 
-// Define base paths - handle both local and Vercel environments
-const isVercel = process.env.VERCEL === '1';
-const basePath = isVercel ? '/vercel/path0' : __dirname;
-const baseNextDir = path.join(basePath, '.next');
+// Base paths to check
+const basePath = process.cwd();
+console.log(`Base path: ${basePath}`);
 
-// Paths to check and fix
-const pathsToFix = [
-  path.join(baseNextDir, 'server/app/(dashboard)'),
-  // Add backup path for Vercel environment
-  path.join(basePath, '.next/server/app/(dashboard)'),
-  // For standalone output
-  path.join(baseNextDir, 'standalone/.next/server/app/(dashboard)'),
-  // Additional paths for absolute reference
-  path.join('/vercel/path0/.next/server/app/(dashboard)'),
-  path.join('/vercel/path0/.next/standalone/.next/server/app/(dashboard)')
+// Next.js directory
+const nextDir = path.join(basePath, '.next');
+console.log(`Base Next.js directory: ${nextDir}`);
+
+// Target directories where we may need to create empty manifest files
+const targetDirs = [
+  path.join(nextDir, 'server/app/(dashboard)'),
+  path.join(nextDir, 'server/app/(dashboard)'),
+  path.join(nextDir, 'standalone/.next/server/app/(dashboard)'),
 ];
 
-// Ensure directories exist
-const ensureDir = (dir) => {
-  if (!fs.existsSync(dir)) {
-    try {
-      fs.mkdirSync(dir, { recursive: true });
-      console.log(`Created directory: ${dir}`);
-    } catch (err) {
-      console.error(`Error creating directory ${dir}:`, err.message);
-    }
-  }
-};
+// Additional directories to check on Vercel
+if (process.env.VERCEL) {
+  targetDirs.push(
+    path.join('/vercel/output/.next/server/app/(dashboard)'),
+    path.join('/vercel/output/.next/standalone/.next/server/app/(dashboard)')
+  );
+}
 
-// Create the empty client-reference-manifest file
-const createEmptyManifestFile = (dir) => {
-  const manifestFile = path.join(dir, 'page_client-reference-manifest.js');
-  
+// Create empty manifest files in all potential locations
+for (const dir of targetDirs) {
   try {
+    console.log(`Checking path: ${dir}`);
+    
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(dir)) {
+      console.log(`Created directory: ${dir}`);
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // Create empty manifest file if it doesn't exist
+    const manifestFile = path.join(dir, 'page_client-reference-manifest.js');
     if (!fs.existsSync(manifestFile)) {
-      // Create an empty file with valid JS content
-      fs.writeFileSync(
-        manifestFile,
-        'module.exports = { __esModule: true, default: {} };'
-      );
+      fs.writeFileSync(manifestFile, '// Auto-generated empty manifest file');
       console.log(`Created empty manifest file at ${manifestFile}`);
     } else {
       console.log(`Manifest file already exists at ${manifestFile}`);
     }
-  } catch (err) {
-    console.error(`Error creating manifest file ${manifestFile}:`, err.message);
+  } catch (error) {
+    console.log(`Error processing ${dir}: ${error.message}`);
   }
-};
+}
 
-// List all directories to check file existence
-console.log('Environment:', isVercel ? 'Vercel' : 'Local');
-console.log('Base path:', basePath);
-console.log('Base Next.js directory:', baseNextDir);
-
-// Try to fix all possible paths
-pathsToFix.forEach(dirPath => {
-  console.log(`Checking path: ${dirPath}`);
-  ensureDir(dirPath);
-  createEmptyManifestFile(dirPath);
-});
-
-// Handle additional Vercel-specific case by creating a symlink if needed
-if (isVercel) {
-  try {
-    const possibleSourcePaths = [
-      path.join(basePath, '.next/server/app/(dashboard)/page_client-reference-manifest.js'),
-      path.join('/vercel/path0/.next/server/app/(dashboard)/page_client-reference-manifest.js')
-    ];
-
-    const possibleTargetPaths = [
-      path.join(basePath, '.next/standalone/.next/server/app/(dashboard)/page_client-reference-manifest.js'),
-      path.join('/vercel/path0/.next/standalone/.next/server/app/(dashboard)/page_client-reference-manifest.js')
-    ];
-
-    // Try to create symlinks between any existing source and missing target
-    for (const source of possibleSourcePaths) {
-      if (fs.existsSync(source)) {
-        for (const target of possibleTargetPaths) {
-          if (!fs.existsSync(target)) {
-            ensureDir(path.dirname(target));
-            fs.symlinkSync(source, target);
-            console.log(`Created symlink from ${source} to ${target}`);
-          }
-        }
-      }
+// Create empty route files for Next.js app router
+try {
+  const routeGroupPaths = [
+    path.join(basePath, 'src/app/(dashboard)/_static'),
+    path.join(basePath, 'src/app/_static')
+  ];
+  
+  for (const dir of routeGroupPaths) {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+      console.log(`Created route group directory: ${dir}`);
     }
-  } catch (err) {
-    console.error('Error creating symlink:', err.message);
+    
+    const placeholderFile = path.join(dir, 'placeholder.js');
+    fs.writeFileSync(placeholderFile, 'export default {};');
+    console.log(`Created placeholder file: ${placeholderFile}`);
   }
+} catch (error) {
+  console.log(`Error creating route group files: ${error.message}`);
 } 

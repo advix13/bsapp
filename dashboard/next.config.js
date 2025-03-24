@@ -2,10 +2,9 @@
 const path = require('path');
 const fs = require('fs');
 
-// Get repository name from package.json or default to empty string
-const getBasePath = () => {
-  return process.env.GITHUB_ACTIONS === 'true' ? '/bsapp' : '';
-};
+// Get repository name for GitHub Pages
+const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+const basePath = isGitHubActions ? '/bsapp' : '';
 
 const nextConfig = {
   // Skip type checking and eslint during build
@@ -21,17 +20,17 @@ const nextConfig = {
     // Add serverActions to ensure proper build
     serverActions: true,
   },
-  // Disable image optimization
+  // Disable image optimization for static export
   images: {
     unoptimized: true,
     domains: ['*'],
   },
-  // Use 'export' for GitHub Pages
+  // Static HTML export for GitHub Pages
   output: 'export',
   // Set basePath for GitHub Pages
-  basePath: getBasePath(),
+  basePath: basePath,
   // Set assetPrefix for GitHub Pages
-  assetPrefix: getBasePath(),
+  assetPrefix: basePath,
   // Disable React strict mode
   reactStrictMode: false,
   // Disable source maps in production
@@ -50,7 +49,7 @@ const nextConfig = {
     // Add a plugin to handle the client-reference-manifest issue
     config.plugins.push(
       new webpack.DefinePlugin({
-        'process.env.__NEXT_ROUTER_BASEPATH': JSON.stringify(getBasePath()),
+        'process.env.__NEXT_ROUTER_BASEPATH': JSON.stringify(basePath),
       })
     );
     
@@ -58,15 +57,6 @@ const nextConfig = {
   },
   // Custom distDir to avoid issues with nested directories in route groups
   distDir: '.next',
-  // Ensure routes with parentheses are handled correctly
-  async rewrites() {
-    return [
-      {
-        source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
-        destination: '/$1',
-      },
-    ];
-  },
   // Needed for static export with route groups
   trailingSlash: true,
 };

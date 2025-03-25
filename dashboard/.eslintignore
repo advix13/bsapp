@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+build/
+public/
+.vercel/
+*.d.ts
+next-env.d.ts
+*.js
+*.jsx
+*.ts
+*.tsx 

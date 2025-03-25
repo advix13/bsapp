@@ -1,32 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Basic configuration
-  reactStrictMode: false,
-  swcMinify: false,
-  poweredByHeader: false,
-  compress: true,
-  
-  // Ignore TypeScript and ESLint errors
+  // Skip build errors
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  
-  // Enable static exports
-  output: 'export',
-  distDir: 'out',
-  
-  // Basic image configuration - unoptimized for static export
+  // Optimization settings
+  reactStrictMode: false,
+  swcMinify: false,
+  // Basic image settings
   images: {
     unoptimized: true
   },
-  
-  // Disable minimization completely with webpack
+  // Disable minimization
   webpack: (config) => {
     config.optimization.minimize = false;
-    config.optimization.minimizer = [];
     return config;
   }
 };
